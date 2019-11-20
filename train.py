@@ -20,8 +20,7 @@ matplotlib.use("Agg")
 #! Training Configuration
 EPOCHS = 10
 INIT_LR = 1e-3
-BS = 32
-IMAGE_DIMS = (96, 96, 3)
+BS = 64
 
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
