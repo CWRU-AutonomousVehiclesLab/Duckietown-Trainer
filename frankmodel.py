@@ -37,10 +37,10 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164)(x)
-        x = Dense(100)(x)
-        x = Dense(50)(x)
-        x = Dense(10)(x)
+        x = Dense(1164,activation='tanh')(x)
+        x = Dense(100,activation='tanh')(x)
+        x = Dense(50,activation='tanh')(x)
+        x = Dense(10,activation='tanh')(x)
         x = Dense(1,name="Linear_Velocity_Out")(x)
 
         return x
@@ -70,10 +70,10 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164)(x)
-        x = Dense(100)(x)
-        x = Dense(50)(x)
-        x = Dense(10)(x)
+        x = Dense(1164,activation='tanh')(x)
+        x = Dense(100,activation='tanh')(x)
+        x = Dense(50,activation='tanh')(x)
+        x = Dense(10,activation='tanh')(x)
         x = Dense(1,name="Angular_Velocity_Out")(x)
 
         return x
