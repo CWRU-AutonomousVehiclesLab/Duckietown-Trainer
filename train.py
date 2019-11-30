@@ -14,13 +14,15 @@ import cv2
 import math
 import random
 import matplotlib
-matplotlib.use("Agg")
+import tkinter
+
+matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 10
+EPOCHS = 1000
 INIT_LR = 1e-3
-BS = 64
+BS = 128
 
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
@@ -38,6 +40,10 @@ def load_data():
     observation = np.array(observation)
     linear = np.array(linear)
     angular = np.array(angular)
+    print('Observation Length: ',len(observation))
+    print('Linear Length: ',len(linear))
+    print('Angular Length: ',len(angular))
+    #exit()
     return
 
 
@@ -70,3 +76,35 @@ history = model.fit(observation_train,
                     epochs=EPOCHS, verbose=1)
 
 model.save('FrankNet.h5')
+"""
+dict_keys([ 'val_loss', 
+            'val_Linear_Velocity_Out_loss', 
+            'val_Angular_Velocity_Out_loss', 
+            'val_Linear_Velocity_Out_accuracy', 
+            'val_Angular_Velocity_Out_accuracy', 
+            'loss', 
+            'Linear_Velocity_Out_loss', 
+            'Angular_Velocity_Out_loss', 
+            'Linear_Velocity_Out_accuracy', 
+            'Angular_Velocity_Out_accuracy'])
+
+"""
+# list all data in history
+print(history.history.keys())
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+# summarize history for accuracy
+plt.plot(history.history['Linear_Velocity_Out_accuracy'])
+plt.plot(history.history['Angular_Velocity_Out_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['Lienar', 'Angular'], loc='upper left')
+plt.show()
