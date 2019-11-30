@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.utils import shuffle
 from keras.optimizers import Adam
+from keras.callbacks import ModelCheckpoint
+
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
@@ -20,7 +22,7 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 1000
+EPOCHS = 10000
 INIT_LR = 1e-3
 BS = 128
 
@@ -67,13 +69,17 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
               metrics=["accuracy"])
 
+# checkpoint
+filepath="weights-improvement-{epoch:02d}-{loss:.2f}.h5"
+checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
 
 history = model.fit(observation_train,
                     {"Linear_Velocity_Out": linear_train,
                         "Angular_Velocity_Out": angular_train},
                     validation_data=(observation_valid, {
                                      "Linear_Velocity_Out": linear_valid, "Angular_Velocity_Out": angular_valid}),
-                    epochs=EPOCHS, verbose=1)
+                    epochs=EPOCHS,callbacks=callbacks_list, verbose=1)
 
 model.save('FrankNet.h5')
 """
