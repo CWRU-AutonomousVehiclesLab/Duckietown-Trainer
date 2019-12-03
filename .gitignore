@@ -2,3 +2,4 @@ __pycache__
 train.log
 FrankNet.h5
 FrankNet_Andrew.h5
+FrankNetBest.h5

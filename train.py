@@ -70,8 +70,8 @@ model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
               metrics=["accuracy"])
 
 # checkpoint
-filepath="weights-improvement-{epoch:02d}-{loss:.2f}.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='max')
+filepath="FrankNetBest.h5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
 history = model.fit(observation_train,
