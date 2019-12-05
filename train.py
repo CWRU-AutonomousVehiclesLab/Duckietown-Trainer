@@ -27,6 +27,7 @@ EPOCHS = 10000
 INIT_LR = 1e-3
 BS = 19000
 GPU_COUNT = 3
+
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
 
