@@ -41,7 +41,7 @@ class FrankNet:
         x = Dense(100)(x)
         x = Dense(50)(x)
         x = Dense(10)(x)
-        x = Dense(1,name="Linear_Velocity_Out")(x)
+        x = Dense(1,name="Linear")(x)
 
         return x
 
@@ -74,7 +74,7 @@ class FrankNet:
         x = Dense(100)(x)
         x = Dense(50)(x)
         x = Dense(10)(x)
-        x = Dense(1,name="Angular_Velocity_Out")(x)
+        x = Dense(1,name="Angular")(x)
 
         return x
 

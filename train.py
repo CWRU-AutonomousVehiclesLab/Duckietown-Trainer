@@ -28,7 +28,7 @@ matplotlib.use('TkAgg')
 #! Training Configuration
 EPOCHS = 10000
 INIT_LR = 1e-3
-BS = 19000
+BS = 64
 GPU_COUNT = 3
 
 #! Log Interpretation
@@ -89,15 +89,15 @@ print('Load all complete')
 single_model = FrankNet.build(200, 100)
 
 losses = {
-    "Linear_Velocity_Out": "mse",
-    "Angular_Velocity_Out": "mse"
+    "Linear": "mse",
+    "Angular": "mse"
 }
-lossWeights = {"Linear_Velocity_Out": 1.0, "Angular_Velocity_Out": 5.0}
+lossWeights = {"Linear": 1.0, "Angular": 50.0}
 
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 
-metrics_list = ["mean_squared_error", rmse, r_square]
+metrics_list = ["mse", rmse, r_square]
 
 model = multi_gpu_model(single_model, gpus=GPU_COUNT)
 #model = single_model
@@ -116,24 +116,12 @@ checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only
 callbacks_list = [checkpoint,tensorboard]
 
 history = model.fit(observation,
-                    {"Linear_Velocity_Out": linear,
-                        "Angular_Velocity_Out": angular},
+                    {"Linear": linear,
+                        "Angular": angular},
                     epochs=EPOCHS,callbacks=callbacks_list, verbose=1)
 
 model.save('FrankNet.h5')
-"""
-dict_keys([ 'val_loss', 
-            'val_Linear_Velocity_Out_loss', 
-            'val_Angular_Velocity_Out_loss', 
-            'val_Linear_Velocity_Out_accuracy', 
-            'val_Angular_Velocity_Out_accuracy', 
-            'loss', 
-            'Linear_Velocity_Out_loss', 
-            'Angular_Velocity_Out_loss', 
-            'Linear_Velocity_Out_accuracy', 
-            'Angular_Velocity_Out_accuracy'])
 
-"""
 # list all data in history
 print(history.history.keys())
 # summarize history for loss
@@ -146,8 +134,8 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 # summarize history for accuracy
-plt.plot(history.history['Linear_Velocity_Out_accuracy'])
-plt.plot(history.history['Angular_Velocity_Out_accuracy'])
+plt.plot(history.history['Linear_accuracy'])
+plt.plot(history.history['Angular_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
