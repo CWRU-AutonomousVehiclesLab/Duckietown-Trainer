@@ -92,7 +92,7 @@ losses = {
     "Linear": "mse",
     "Angular": "mse"
 }
-lossWeights = {"Linear": 1.0, "Angular": 50.0}
+lossWeights = {"Linear": 0.3, "Angular": 1.0}
 
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)

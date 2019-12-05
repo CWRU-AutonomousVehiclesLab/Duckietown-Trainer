@@ -37,11 +37,11 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164)(x)
-        x = Dense(100)(x)
-        x = Dense(50)(x)
-        x = Dense(10)(x)
-        x = Dense(1,name="Linear")(x)
+        x = Dense(1164, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(100, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(50, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(10, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(1, kernel_initializer='normal', name="Linear")(x)
 
         return x
 
@@ -70,11 +70,11 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164)(x)
-        x = Dense(100)(x)
-        x = Dense(50)(x)
-        x = Dense(10)(x)
-        x = Dense(1,name="Angular")(x)
+        x = Dense(1164, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(100, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(50, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(10, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(1, kernel_initializer='normal', name="Angular")(x)
 
         return x
 
