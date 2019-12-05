@@ -5,6 +5,7 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.utils import shuffle
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
+from keras.utils import multi_gpu_model
 
 import numpy as np
 import tensorflow as tf
@@ -24,8 +25,8 @@ matplotlib.use('TkAgg')
 #! Training Configuration
 EPOCHS = 10000
 INIT_LR = 1e-3
-BS = 128
-
+BS = 19000
+GPU_COUNT = 3
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
 
@@ -52,12 +53,9 @@ def load_data():
 #!================================================================
 load_data()
 print('Load all complete')
-# split data into training and validation
-observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
-    observation, linear, angular, test_size=0.2)
 
 # define the network model
-model = FrankNet.build(200, 100)
+single_model = FrankNet.build(200, 100)
 
 losses = {
     "Linear_Velocity_Out": "mse",
@@ -66,19 +64,19 @@ losses = {
 lossWeights = {"Linear_Velocity_Out": 1.0, "Angular_Velocity_Out": 1.0}
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+model = multi_gpu_model(single_model, gpus=GPU_COUNT)
+
 model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
               metrics=["accuracy"])
 
 # checkpoint
 filepath="FrankNetBest.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
-history = model.fit(observation_train,
-                    {"Linear_Velocity_Out": linear_train,
-                        "Angular_Velocity_Out": angular_train},
-                    validation_data=(observation_valid, {
-                                     "Linear_Velocity_Out": linear_valid, "Angular_Velocity_Out": angular_valid}),
+history = model.fit(observation,
+                    {"Linear_Velocity_Out": linear,
+                        "Angular_Velocity_Out": angular},
                     epochs=EPOCHS,callbacks=callbacks_list, verbose=1)
 
 model.save('FrankNet.h5')
