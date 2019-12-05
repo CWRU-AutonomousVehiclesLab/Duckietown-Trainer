@@ -22,9 +22,9 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 10000
-INIT_LR = 1e-3
-BS = 128
+EPOCHS = 100
+INIT_LR = 1e-4
+BS = 32
 
 #! Log Interpretation
 STORAGE_LOCATION = "trained_models/behavioral_cloning"
