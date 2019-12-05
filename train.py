@@ -6,6 +6,9 @@ from sklearn.utils import shuffle
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from keras.utils import multi_gpu_model
+from keras.utils import plot_model
+from keras.callbacks import TensorBoard
+from time import time
 
 import numpy as np
 import tensorflow as tf
@@ -66,14 +69,17 @@ lossWeights = {"Linear_Velocity_Out": 1.0, "Angular_Velocity_Out": 1.0}
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = multi_gpu_model(single_model, gpus=GPU_COUNT)
-
+#model = single_model
 model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
               metrics=["accuracy"])
+plot_model(model, to_file='model.png')
+# tensorboard
+tensorboard = TensorBoard(log_dir='logs/{}'.format(time()))
 
 # checkpoint
 filepath="FrankNetBest.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-callbacks_list = [checkpoint]
+callbacks_list = [checkpoint,tensorboard]
 
 history = model.fit(observation,
                     {"Linear_Velocity_Out": linear,
