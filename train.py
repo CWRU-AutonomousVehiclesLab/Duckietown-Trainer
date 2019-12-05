@@ -54,6 +54,33 @@ def load_data():
     return
 
 
+#-----------------------------------------------------------------------------
+# Define custom loss functions for regression in Keras 
+#-----------------------------------------------------------------------------
+
+# root mean squared error (rmse) for regression
+def rmse(y_true, y_pred):
+    from keras import backend
+    return backend.sqrt(backend.mean(backend.square(y_pred - y_true), axis=-1))
+
+# mean squared error (mse) for regression
+def mse(y_true, y_pred):
+    from keras import backend
+    return backend.mean(backend.square(y_pred - y_true), axis=-1)
+
+# coefficient of determination (R^2) for regression
+def r_square(y_true, y_pred):
+    from keras import backend as K
+    SS_res =  K.sum(K.square(y_true - y_pred)) 
+    SS_tot = K.sum(K.square(y_true - K.mean(y_true))) 
+    return (1 - SS_res/(SS_tot + K.epsilon()))
+
+def r_square_loss(y_true, y_pred):
+    from keras import backend as K
+    SS_res =  K.sum(K.square(y_true - y_pred)) 
+    SS_tot = K.sum(K.square(y_true - K.mean(y_true))) 
+    return 1 - ( 1 - SS_res/(SS_tot + K.epsilon()))
+
 #!================================================================
 load_data()
 print('Load all complete')
@@ -65,14 +92,21 @@ losses = {
     "Linear_Velocity_Out": "mse",
     "Angular_Velocity_Out": "mse"
 }
-lossWeights = {"Linear_Velocity_Out": 1.0, "Angular_Velocity_Out": 1.0}
+lossWeights = {"Linear_Velocity_Out": 1.0, "Angular_Velocity_Out": 5.0}
+
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+
+metrics_list = ["mean_squared_error", rmse, r_square]
+
 model = multi_gpu_model(single_model, gpus=GPU_COUNT)
 #model = single_model
+
 model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
-              metrics=["accuracy"])
+              metrics=metrics_list)
+
 plot_model(model, to_file='model.png')
+
 # tensorboard
 tensorboard = TensorBoard(log_dir='logs/{}'.format(time()))
 
