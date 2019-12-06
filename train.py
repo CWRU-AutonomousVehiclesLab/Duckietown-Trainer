@@ -8,8 +8,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import multi_gpu_model
 from keras.utils import plot_model
 from keras.callbacks import TensorBoard
-from time import time
-
+import time
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
@@ -108,7 +107,7 @@ model.compile(optimizer=opt, loss=losses, loss_weights=lossWeights,
 plot_model(model, to_file='model.png')
 
 # tensorboard
-tensorboard = TensorBoard(log_dir='logs/{}'.format(time()))
+tensorboard = TensorBoard(log_dir='logs/{}'.format(time.ctime()))
 
 # checkpoint
 filepath = "FrankNetBest.h5"
