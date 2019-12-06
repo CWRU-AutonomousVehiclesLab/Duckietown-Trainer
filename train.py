@@ -26,7 +26,7 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 10000
+EPOCHS = 30
 INIT_LR = 1e-3
 BS = 64
 GPU_COUNT = 3
@@ -47,16 +47,16 @@ def load_data():
     observation = np.array(observation)
     linear = np.array(linear)
     angular = np.array(angular)
-    print('Observation Length: ',len(observation))
-    print('Linear Length: ',len(linear))
-    print('Angular Length: ',len(angular))
-    #exit()
+    print('Observation Length: ', len(observation))
+    print('Linear Length: ', len(linear))
+    print('Angular Length: ', len(angular))
+    # exit()
     return
 
 
-#-----------------------------------------------------------------------------
-# Define custom loss functions for regression in Keras 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Define custom loss functions for regression in Keras
+# -----------------------------------------------------------------------------
 
 # root mean squared error (rmse) for regression
 def rmse(y_true, y_pred):
@@ -64,27 +64,27 @@ def rmse(y_true, y_pred):
     return backend.sqrt(backend.mean(backend.square(y_pred - y_true), axis=-1))
 
 # mean squared error (mse) for regression
+
+
 def mse(y_true, y_pred):
     from keras import backend
     return backend.mean(backend.square(y_pred - y_true), axis=-1)
 
 # coefficient of determination (R^2) for regression
+
+
 def r_square(y_true, y_pred):
     from keras import backend as K
-    SS_res =  K.sum(K.square(y_true - y_pred)) 
-    SS_tot = K.sum(K.square(y_true - K.mean(y_true))) 
+    SS_res = K.sum(K.square(y_true - y_pred))
+    SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return (1 - SS_res/(SS_tot + K.epsilon()))
 
-def r_square_loss(y_true, y_pred):
-    from keras import backend as K
-    SS_res =  K.sum(K.square(y_true - y_pred)) 
-    SS_tot = K.sum(K.square(y_true - K.mean(y_true))) 
-    return 1 - ( 1 - SS_res/(SS_tot + K.epsilon()))
 
 #!================================================================
 load_data()
 print('Load all complete')
-
+observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
+    observation, linear, angular, test_size=0.2)
 # define the network model
 single_model = FrankNet.build(200, 100)
 
@@ -92,7 +92,7 @@ losses = {
     "Linear": "mse",
     "Angular": "mse"
 }
-lossWeights = {"Linear": 0.3, "Angular": 1.0}
+lossWeights = {"Linear": 0.001, "Angular": 10.0}
 
 
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
@@ -111,33 +111,15 @@ plot_model(model, to_file='model.png')
 tensorboard = TensorBoard(log_dir='logs/{}'.format(time()))
 
 # checkpoint
-filepath="FrankNetBest.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-callbacks_list = [checkpoint,tensorboard]
+filepath = "FrankNetBest.h5"
+checkpoint = ModelCheckpoint(
+    filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+callbacks_list = [checkpoint, tensorboard]
 
-history = model.fit(observation,
-                    {"Linear": linear,
-                        "Angular": angular},
-                    epochs=EPOCHS,callbacks=callbacks_list, verbose=1)
+history = model.fit(observation_train,
+                    {"Linear": linear_train,
+                        "Angular": angular_train}, validation_data=(observation_valid, {
+                            "Linear": linear_valid, "Angular": angular_valid}),
+                    epochs=EPOCHS, callbacks=callbacks_list, verbose=1)
 
 model.save('FrankNet.h5')
-
-# list all data in history
-print(history.history.keys())
-# summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-# summarize history for accuracy
-plt.plot(history.history['Linear_accuracy'])
-plt.plot(history.history['Angular_accuracy'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['Lienar', 'Angular'], loc='upper left')
-plt.show()
