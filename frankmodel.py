@@ -37,16 +37,16 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(100, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(50, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(10, kernel_initializer='normal', activation='tanh')(x)
+        x = Dense(1164, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(100, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(50, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(10, kernel_initializer='normal', activation='relu')(x)
         x = Dense(1, kernel_initializer='normal', name="Linear")(x)
 
         return x
 
     @staticmethod
-    def build_angular_branch(inputs=(150, 200, 3)):
+    def build_angular_branch(inputs=(100, 200, 3)):
         # ? Layer Normalization
         x = Lambda(lambda x: x/255.0)(inputs)
 
@@ -70,16 +70,16 @@ class FrankNet:
         x = Flatten()(x)
 
         # ? Fully Connected
-        x = Dense(1164, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(100, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(50, kernel_initializer='normal', activation='tanh')(x)
-        x = Dense(10, kernel_initializer='normal', activation='tanh')(x)
+        x = Dense(1164, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(100, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(50, kernel_initializer='normal', activation='relu')(x)
+        x = Dense(10, kernel_initializer='normal', activation='relu')(x)
         x = Dense(1, kernel_initializer='normal', name="Angular")(x)
 
         return x
 
     @staticmethod
-    def build(width=150, height=200):
+    def build(width=100, height=200):
         input_shape = (height, width, 3)
         inputs = Input(shape=input_shape)
         linearVelocity = FrankNet.build_linear_branch(inputs)
