@@ -25,9 +25,9 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 30
+EPOCHS = 50
 INIT_LR = 1e-3
-BS = 64
+BS = 32
 GPU_COUNT = 3
 
 #! Log Interpretation
@@ -82,10 +82,10 @@ def r_square(y_true, y_pred):
 #!================================================================
 load_data()
 print('Load all complete')
-observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
-    observation, linear, angular, test_size=0.2)
+# observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
+#     observation, linear, angular, test_size=0.2)
 # define the network model
-single_model = FrankNet.build(200, 100)
+single_model = FrankNet.build(200, 150)
 
 losses = {
     "Linear": "mse",
@@ -112,13 +112,16 @@ tensorboard = TensorBoard(log_dir='logs/{}'.format(time.ctime()))
 # checkpoint
 filepath = "FrankNetBest.h5"
 checkpoint = ModelCheckpoint(
-    filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint, tensorboard]
-
-history = model.fit(observation_train,
-                    {"Linear": linear_train,
-                        "Angular": angular_train}, validation_data=(observation_valid, {
-                            "Linear": linear_valid, "Angular": angular_valid}),
+history = model.fit(observation,
+                    {"Linear": linear,
+                        "Angular": angular}, 
                     epochs=EPOCHS, callbacks=callbacks_list, verbose=1)
+# history = model.fit(observation_train,
+#                     {"Linear": linear_train,
+#                         "Angular": angular_train}, validation_data=(observation_valid, {
+#                             "Linear": linear_valid, "Angular": angular_valid}),
+#                     epochs=EPOCHS, callbacks=callbacks_list, verbose=1)
 
 model.save('FrankNet.h5')
