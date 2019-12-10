@@ -25,7 +25,7 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 50
+EPOCHS = 1000
 INIT_LR = 1e-3
 BS = 64
 GPU_COUNT = 3
@@ -85,7 +85,7 @@ print('Load all complete')
 observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
     observation, linear, angular, test_size=0.2,shuffle=False)
 # define the network model
-single_model = FrankNet.build(200, 100)
+single_model = FrankNet.build(200, 150)
 
 losses = {
     "Linear": "mse",

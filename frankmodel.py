@@ -46,7 +46,7 @@ class FrankNet:
         return x
 
     @staticmethod
-    def build_angular_branch(inputs=(100, 200, 3)):
+    def build_angular_branch(inputs=(150, 200, 3)):
         # ? Layer Normalization
         x = Lambda(lambda x: x/255.0)(inputs)
 
@@ -79,7 +79,7 @@ class FrankNet:
         return x
 
     @staticmethod
-    def build(width=100, height=200):
+    def build(width=150, height=200):
         input_shape = (height, width, 3)
         inputs = Input(shape=input_shape)
         linearVelocity = FrankNet.build_linear_branch(inputs)
