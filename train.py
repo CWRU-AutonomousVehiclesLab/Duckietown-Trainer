@@ -25,7 +25,7 @@ matplotlib.use('TkAgg')
 
 
 #! Training Configuration
-EPOCHS = 1000
+EPOCHS = 10000
 INIT_LR = 1e-3
 BS = 64
 GPU_COUNT = 3
@@ -83,7 +83,7 @@ def r_square(y_true, y_pred):
 load_data()
 print('Load all complete')
 observation_train, observation_valid, linear_train, linear_valid, angular_train, angular_valid = train_test_split(
-    observation, linear, angular, test_size=0.2,shuffle=False)
+    observation, linear, angular, test_size=0.2,shuffle=True)
 # define the network model
 single_model = FrankNet.build(200, 150)
 
